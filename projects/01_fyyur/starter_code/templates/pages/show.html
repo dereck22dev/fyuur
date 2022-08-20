@@ -1,16 +1,27 @@
 {% extends 'layouts/main.html' %}
-{% block title %}Show Search{% endblock %}
+{% block title %}Fyyur | Show Search{% endblock %}
 {% block content %}
-
-    <div class="page-header">
-        <h1>Fyyur Search!</h1>
+<h3>Search result for Show"{{ search_term }}":</h3>
+<section>
+    <div class="row">
+        {%if results.count == 1 %}
+            {%for show in results.data %}
+            <div class="col-sm-4">
+                <div class="tile tile-show">
+                    <img src="{{ show.Artist.image_link }}" alt="Show Artist Image" />
+                    <h5><a href="/artists/{{ show.artist }}">{{ show.Artist.name }}</a></h5>
+                    <h6>{{ show.start_time|datetime('full') }}</h6>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        {%if results.count == 0 %}
+            <h4>Show: {{search_term}} Not exist</h4>
+        {% endif %}    
     </div>
-    <p class="lead"> Show Search </p>
-
     <ul class="nav nav-pills">
-        <li class="active"><a>Shows</a></li>
-    </ul>
-
-{#    Todo implement show search frontend #}
+        <li class="active"><a href="{{url_for('shows')}}">back to Shows page</a></li>
+    </ul> 
+</section>
 
 {% endblock %}

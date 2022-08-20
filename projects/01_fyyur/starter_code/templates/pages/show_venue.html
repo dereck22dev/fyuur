@@ -10,8 +10,8 @@
 			ID: {{ venue.id }}
 		</p>
 		<div class="genres">
-			{% for genre in venue.genres %}
-			<span class="genre">{{ genre }}</span>
+			{% for genre in venue.genres or []%}
+				<span class="genre">{{ genre }}</span>
 			{% endfor %}
 		</div>
 		<p>
@@ -52,8 +52,8 @@
 		{%for show in venue.upcoming_shows %}
 		<div class="col-sm-4">
 			<div class="tile tile-show">
-				<img src="{{ show.artist_image_link }}" alt="Show Artist Image" />
-				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist_name }}</a></h5>
+				<img src="{{ show.Artist.image_link }}" alt="Show Artist Image" />
+				<h5><a href="/artists/{{ show.artist }}">{{ show.Artist.name }}</a></h5>
 				<h6>{{ show.start_time|datetime('full') }}</h6>
 			</div>
 		</div>
@@ -66,8 +66,8 @@
 		{%for show in venue.past_shows %}
 		<div class="col-sm-4">
 			<div class="tile tile-show">
-				<img src="{{ show.artist_image_link }}" alt="Show Artist Image" />
-				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist_name }}</a></h5>
+				<img src="{{ show.Artist.image_link }}" alt="Show Artist Image" />
+				<h5><a href="/artists/{{ show.artist }}">{{ show.Artist.name }}</a></h5>
 				<h6>{{ show.start_time|datetime('full') }}</h6>
 			</div>
 		</div>
@@ -76,6 +76,7 @@
 </section>
 
 <a href="/venues/{{ venue.id }}/edit"><button class="btn btn-primary btn-lg">Edit</button></a>
-
+<button class="btn btn-danger btn-lg" id="delete_btn" data-venue_id="{{venue.id}}">Delete</button>
+<script src="/static/js/delete_venue.js"></script>
 {% endblock %}
 

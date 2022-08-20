@@ -1,9 +1,11 @@
 from datetime import datetime
-from flask_wtf import Form
+from random import choices
+from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms.validators import DataRequired, URL
+from validator import *
 
-class ShowForm(Form):
+class ShowForm(FlaskForm):
     artist_id = StringField(
         'artist_id'
     )
@@ -15,8 +17,7 @@ class ShowForm(Form):
         validators=[DataRequired()],
         default= datetime.today()
     )
-
-class VenueForm(Form):
+class VenueForm(FlaskForm):
     name = StringField(
         'name', validators=[DataRequired()]
     )
@@ -24,7 +25,7 @@ class VenueForm(Form):
         'city', validators=[DataRequired()]
     )
     state = SelectField(
-        'state', validators=[DataRequired()],
+        'state', validators=[DataRequired(),validate_state],
         choices=[
             ('AL', 'AL'),
             ('AK', 'AK'),
@@ -83,14 +84,14 @@ class VenueForm(Form):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone'
+        'phone',validators=[DataRequired(),validate_phone],
     )
     image_link = StringField(
         'image_link'
     )
     genres = SelectMultipleField(
-        # TODO implement enum restriction
-        'genres', validators=[DataRequired()],
+        
+        'genres', validators=[DataRequired(),validate_genres],
         choices=[
             ('Alternative', 'Alternative'),
             ('Blues', 'Blues'),
@@ -111,8 +112,7 @@ class VenueForm(Form):
             ('Rock n Roll', 'Rock n Roll'),
             ('Soul', 'Soul'),
             ('Other', 'Other'),
-        ]
-    )
+        ])
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
     )
@@ -128,7 +128,7 @@ class VenueForm(Form):
 
 
 
-class ArtistForm(Form):
+class ArtistForm(FlaskForm):
     name = StringField(
         'name', validators=[DataRequired()]
     )
@@ -236,4 +236,3 @@ class ArtistForm(Form):
     seeking_description = StringField(
             'seeking_description'
      )
-

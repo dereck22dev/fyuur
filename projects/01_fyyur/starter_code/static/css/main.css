@@ -209,3 +209,21 @@ h2.monospace {
 .subtitle {
   opacity: 0.5;
 }
+.search{
+  display: flex;
+  margin-right: 20px;
+}
+
+.search input[type="submit"]{
+  background-color: rgb(255, 230, 0);
+  transition: 0.5s;
+}
+.search input[type="submit"]:hover,
+.search input[type="submit"]:active{
+  outline: none;
+  box-shadow: inset 0px 0px 5px rgba(215, 206, 206, 0.614);
+}
+
+.copyright_container{
+  text-align: center;
+}
