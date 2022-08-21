@@ -49,8 +49,10 @@
 		{%for show in artist.upcoming_shows %}
 		<div class="col-sm-4">
 			<div class="tile tile-show">
-				<img src="{{ show.Venue.image_link }}" alt="Show Venue Image" />
-				<h5><a href="/venues/{{ show.venue }}">{{ show.Venue.name }}</a></h5>
+				<img src="{{ show.venue_image_link }}" alt="Show Venue Image" />
+				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist_name }}</a></h5>
+				<p>playing at</p>
+            	<h5><a href="/venues/{{ show.venue_id }}">{{ show.venue_name }}</a></h5>
 				<h6>{{ show.start_time|datetime('full') }}</h6>
 			</div>
 		</div>
@@ -63,8 +65,10 @@
 		{%for show in artist.past_shows %}
 		<div class="col-sm-4">
 			<div class="tile tile-show">
-				<img src="{{ show.Venue.image_link }}" alt="Show Venue Image" />
-				<h5><a href="/venues/{{ show.venue }}">{{ show.Venue.name }}</a></h5>
+				<img src="{{ show.venue_image_link }}" alt="Show Venue Image" />
+				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist_name }}</a></h5>
+				<p>playing at</p>
+            	<h5><a href="/venues/{{ show.venue_id }}">{{ show.venue_name }}</a></h5>
 				<h6>{{ show.start_time|datetime('full') }}</h6>
 			</div>
 		</div>
@@ -74,6 +78,7 @@
 
 <a href="/artists/{{ artist.id }}/edit"><button class="btn btn-primary btn-lg">Edit</button></a>
 <button class="btn btn-danger btn-lg" id="delete_btn" data-artist_id="{{artist.id}}">Delete</button>
+<a href="/show/{{ artist.id }}/create"><button class="btn btn-succes btn-lg">Add to show</button></a>
 
 <script src="/static/js/delete_artist.js"></script>
 {% endblock %}

@@ -102,3 +102,10 @@ def validate_phone(form, phone):
     print(f"phone number is valid? : {phone_enabled}")
     if not phone_enabled:
         raise ValidationError("This phone number is not allowed")
+
+        
+def validate_facebook_link(form,facebook_link):
+    reg_validator =r"^(^https?://www\.facebook\.com/)[\w]{3,}([\.\/\?]?)[\w]{0,}([\.\?\=\-]?)[\w\%]{0,}([\?\=\-]?)[\w\%]{0,}([\-\=\&]?)[\w\?]{0,}([\/\?\.\=]?)[\w]{0,}([\/\?\.\=]?)[\w]{0,}([\/\?\.\=]?)[ts]{0,2}$"
+    url_enabled=re.match(reg_validator,facebook_link.data)
+    if not url_enabled:
+        raise ValidationError("This facebook url is not allowed")

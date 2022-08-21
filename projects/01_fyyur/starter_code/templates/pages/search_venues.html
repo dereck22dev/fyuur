@@ -1,17 +1,33 @@
 {% extends 'layouts/main.html' %}
-{% block title %}Fyyur | Venues Search{% endblock %}
+{% block title %}Fyyur | Search{% endblock %}
 {% block content %}
-<h3>Number of search results for "{{ search_term }}": {{ results.count }}</h3>
-<ul class="items">
-	{% for venue in results.data %}
-	<li>
-		<a href="/venues/{{ venue.id }}">
-			<i class="fas fa-music"></i>
-			<div class="item">
-				<h5>{{ venue.name }}</h5>
-			</div>
-		</a>
-	</li>
-	{% endfor %}
-</ul>
+	<h3>Number of search results for "{{ search_term }}": {{ results.venues_count }} Venue{% if results.artists_count>0 %}s{%endif%} and {{results.artists_count}} Artist{%if results.artists_count>0 %}s{%endif%}  are founds</h3>
+	
+	{% if results.venues_count>0 %}<h2 class="monospace">Venues</h2>{%endif%} 
+	<ul class="items">
+		{% for venue in results.venues_data %}
+			<li>
+				<a href="/venues/{{ venue.id }}">
+					<i class="fas fa-music"></i>
+					<div class="item">
+						<h5>{{ venue.name }}</h5>
+					</div>
+				</a>
+			</li>
+		{% endfor %}
+	</ul>
+
+	{%if results.artists_count>0 %}<h2 class="monospace">Artists</h2>{%endif%}
+	<ul class="items">
+		{% for artist in results.artists_data %}
+			<li>
+				<a href="/artists/{{ artist.id }}">
+					<i class="fas fa-music"></i>
+					<div class="item">
+						<h5>{{ artist.name }}</h5>
+					</div>
+				</a>
+			</li>
+		{% endfor %}
+	</ul>
 {% endblock %}

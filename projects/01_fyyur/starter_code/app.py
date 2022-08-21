@@ -98,10 +98,19 @@ def venues():
 def search_venues():
     # on récupère le mot recherché
     search_term = request.form.get("search_term")
+
     # recherchons la dans notre database
     venues_founds = Venue.query.filter(Venue.name.ilike(f"%{search_term}%")).all()
+    artists_founds=Artist.query.filter(Artist.name.ilike(f"%{search_term}%")).all()
+   
     # renvoyons le résultat sous forme d'objet
-    response = {"count": len(venues_founds), "data": venues_founds}
+    response = {
+        "venues_count": len(venues_founds), 
+        "artists_count": len(artists_founds), 
+        "venues_data": venues_founds,
+        "artists_data":artists_founds
+        }
+
     return render_template(
         "pages/search_venues.html",
         results=response,
@@ -159,6 +168,45 @@ def show_venue(venue_id):
             if re.search(genre, stringfy_genres_list):
 
                 genres_reformated.append(genre)
+        #on récupère les données sur les shows passée en fesant un JOIN entre Show et Venue
+        past_shows_query = db.session.query(Show).join(Venue).filter(Show.venue==venue_id).filter(Show.start_time<datetime.now()).all()   
+        
+        #contiendra les données reformatées des past shows
+        past_shows = []
+
+        #on fait le reformatage des données
+        for show in past_shows_query:
+            past_shows.append({
+                
+                "show_id": show.id,
+                "venue_id": show.Venue.id,
+                "venue_name": show.Venue.name,
+                "artist_id": show.Artist.id,
+                "artist_name": show.Artist.name,
+                "artist_image_link": show.Artist.image_link,
+                "venue_image_link": show.Venue.image_link,
+                "start_time": format_datetime(str(show.start_time)),
+
+            })
+
+        #on récupère les données sur les shows à venir en fesant un JOIN entre Show et Venue
+        upcoming_shows_query = db.session.query(Show).join(Venue).filter(Show.venue==venue_id).filter(Show.start_time>datetime.now()).all()   
+        
+        #contiendra les données reformatées des past shows
+        upcoming_shows = []
+
+        #on fait le reformatage des données
+        for show in upcoming_shows_query:
+            upcoming_shows.append({
+                "show_id": show.id,
+                "venue_id": show.Venue.id,
+                "venue_name": show.Venue.name,
+                "artist_id": show.Artist.id,
+                "artist_name": show.Artist.name,
+                "artist_image_link": show.Artist.image_link,
+                "venue_image_link": show.Venue.image_link,
+                "start_time": format_datetime(str(show.start_time)),
+            })
 
         # -------créons maintenant l'objet qui sera rendu
         data = {
@@ -174,31 +222,10 @@ def show_venue(venue_id):
             "website": venue_found.website_link,
             "seeking_talent": venue_found.seeking_talent,
             "seeking_description": venue_found.seeking_description,
-            "upcoming_shows": [
-                show
-                for show in Show.query.filter(
-                    Show.start_time > datetime.now(), Show.venue == venue_found.id
-                ).all()
-            ],
-            "past_shows": [
-                show
-                for show in Show.query.filter(
-                    Show.start_time < datetime.now(timezone.utc),
-                    Show.venue == venue_found.id,
-                ).all()
-            ],
-            "upcoming_shows_count": len(
-                Show.query.filter(
-                    Show.start_time > datetime.now(timezone.utc),
-                    Show.venue == venue_found.id,
-                ).all()
-            ),
-            "past_shows_count": len(
-                Show.query.filter(
-                    Show.start_time < datetime.now(timezone.utc),
-                    Show.venue == venue_found.id,
-                ).all()
-            ),
+            "upcoming_shows":upcoming_shows,
+            "past_shows":past_shows,
+            "upcoming_shows_count": len(upcoming_shows),
+            "past_shows_count": len(past_shows),
         }
     return render_template("pages/show_venue.html", venue=data)
 
@@ -454,6 +481,48 @@ def show_artist(artist_id):
             if re.search(genre, stringfy_genres_list):
 
                 genres_reformated.append(genre)
+
+        #on récupère les données sur les shows passée en fesant un JOIN entre Show et Venue
+        past_shows_query = db.session.query(Show).join(Venue).filter(Show.artist==artist_id).filter(Show.start_time<datetime.now()).all()   
+        
+        #contiendra les données reformatées des past shows
+        past_shows = []
+
+        #on fait le reformatage des données
+        for show in past_shows_query:
+            past_shows.append({
+                
+                "show_id": show.id,
+                "venue_id": show.Venue.id,
+                "venue_name": show.Venue.name,
+                "artist_id": show.Artist.id,
+                "artist_name": show.Artist.name,
+                "artist_image_link": show.Artist.image_link,
+                "venue_image_link": show.Venue.image_link,
+                "start_time": format_datetime(str(show.start_time)),
+
+            })
+
+        #on récupère les données sur les shows à venir en fesant un JOIN entre Show et Venue
+        upcoming_shows_query = db.session.query(Show).join(Venue).filter(Show.artist==artist_id).filter(Show. start_time>datetime.now()).all()   
+        
+        #contiendra les données reformatées des past shows
+        upcoming_shows = []
+
+        #on fait le reformatage des données
+        for show in upcoming_shows_query:
+            upcoming_shows.append({
+                "show_id": show.id,
+                "venue_id": show.Venue.id,
+                "venue_name": show.Venue.name,
+                "artist_id": show.Artist.id,
+                "artist_name": show.Artist.name,
+                "artist_image_link": show.Artist.image_link,
+                "venue_image_link": show.Venue.image_link,
+                "start_time": format_datetime(str(show.start_time)),
+            })
+
+        #données final à renvoyer à la vue
         data = {
             "id": artist_found.id,
             "name": artist_found.name,
@@ -466,28 +535,10 @@ def show_artist(artist_id):
             "website": artist_found.website_link,
             "seeking_venue": artist_found.seeking_venue,
             "seeking_description": artist_found.seeking_description,
-            "upcoming_shows": [
-                show
-                for show in Show.query.filter(
-                    Show.start_time > datetime.now(), Show.artist == artist_found.id
-                ).all()
-            ],
-            "past_shows": [
-                show
-                for show in Show.query.filter(
-                    Show.start_time < datetime.now(), Show.artist == artist_found.id
-                ).all()
-            ],
-            "upcoming_shows_count": len(
-                Show.query.filter(
-                    Show.start_time > datetime.now(), Show.artist == artist_found.id
-                ).all()
-            ),
-            "past_shows_count": len(
-                Show.query.filter(
-                    Show.start_time < datetime.now(), Show.artist == artist_found.id
-                ).all()
-            ),
+            "upcoming_shows": upcoming_shows,
+            "past_shows": past_shows,
+            "upcoming_shows_count": len(upcoming_shows),
+            "past_shows_count": len(past_shows ),
         }
     data = list(filter(lambda d: d["id"] == artist_id, [data]))[0]
     return render_template("pages/show_artist.html", artist=data)
@@ -671,23 +722,57 @@ def delete_artist(artist_id):
 @app.route("/shows")
 def shows():
 
-    show_founds = Show.query.all()
-    data = []
+    #on récupère les données sur les shows passée en fesant un JOIN entre Show et Venue
+    past_shows_query = db.session.query(Show).join(Venue).filter(Show.start_time<datetime.now()).all()   
+    
+    #contiendra les données reformatées des past shows
+    past_shows = []
 
-    for show in show_founds:
+    #on fait le reformatage des données
+    for show in past_shows_query:
+        past_shows.append({
+            
+            "show_id": show.id,
+            "venue_id": show.venue,
+            "venue_name": show.Venue.name,
+            "artist_id": show.artist,
+            "artist_name": show.Artist.name,
+            "artist_image_link": show.Artist.image_link,
+            "venue_image_link": show.Venue.image_link,
+            "start_time": format_datetime(str(show.start_time)),
 
-        data.append(
-            {
-                "show_id": show.id,
-                "venue_id": show.Venue.id,
-                "venue_name": show.Venue.name,
-                "artist_id": show.Artist.id,
-                "artist_name": show.Artist.name,
-                "artist_image_link": show.Artist.image_link,
-                "start_time": format_datetime(str(show.start_time)),
-            }
-        )
-    return render_template("pages/shows.html", shows=data)
+        })
+
+    #on récupère les données sur les shows à venir en fesant un JOIN entre Show et Venue
+    upcoming_shows_query = db.session.query(Show).join(Venue).filter(Show. start_time>datetime.now()).all()   
+
+    #contiendra les données reformatées des past shows
+    upcoming_shows = []
+    print(upcoming_shows)
+    #on fait le reformatage des données
+    for show in upcoming_shows_query:
+        upcoming_shows.append({
+            "show_id": show.id,
+            "venue_id": show.venue,
+            "venue_name": show.Venue.name,
+            "artist_id": show.artist,
+            "artist_name": show.Artist.name,
+            "artist_image_link": show.Artist.image_link,
+            "venue_image_link": show.Venue.image_link,
+            "start_time": format_datetime(str(show.start_time)),
+        })
+
+        print(upcoming_shows)   
+        print(len(upcoming_shows))
+     
+        shows_list={
+            "upcoming_shows":upcoming_shows,
+            "past_shows":past_shows,
+            "upcoming_shows_count":len(upcoming_shows),
+            "past_shows_count":len(past_shows)
+        }
+        print(shows_list)
+    return render_template("pages/shows.html", shows=shows_list)
 
 
 @app.route("/show/search", methods=["POST"])
@@ -721,12 +806,47 @@ def create_shows():
     form = ShowForm()
     return render_template("forms/new_show.html", form=form)
 
+@app.route('/show/<int:artist_id>/create', methods=["GET"])
+def create_show_from_artist(artist_id):
+
+    artist={"artist":artist_id}
+    form = ShowForm(obj=artist)
+    return render_template("forms/new_show_from_artist.html", form=form,artist_id=artist)
+
 
 @app.route("/shows/create", methods=["POST"])
 def create_show_submission():
     form = ShowForm()
 
     artist = form.artist_id.data.strip()
+    venue = form.venue_id.data.strip()
+    start_time = form.start_time.data
+
+    error_an_occured = False
+
+    try:
+        new_show = Show(start_time=start_time, artist=artist, venue=venue)
+        db.session.add(new_show)
+        db.session.commit()
+    except Exception as e:
+        error_an_occured = True
+        db.session.rollback()
+        print(f'Exception "{e}" in create_show_submission()')
+    finally:
+        db.session.close()
+
+    if error_an_occured:
+        flash(f"An error occurred.  Show could not be listed.")
+    else:
+        flash("Show was successfully listed!")
+
+    return render_template("pages/home.html")
+
+@app.route('/show/<int:artist_id>/create', methods=["POST"])
+def create_show_submission_from_artist(artist_id):
+    form = ShowForm()
+
+    artist = artist_id
     venue = form.venue_id.data.strip()
     start_time = form.start_time.data
 
