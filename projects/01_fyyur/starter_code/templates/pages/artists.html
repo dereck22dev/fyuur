@@ -2,7 +2,7 @@
 {% block title %}Fyyur | Artists{% endblock %}
 {% block content %}
 <ul class="items">
-	{% for artist in artists %}
+	{% for artist in artists%}
 	<li>
 		<a href="/artists/{{ artist.id }}">
 			<i class="fas fa-users"></i>
@@ -13,4 +13,27 @@
 	</li>
 	{% endfor %}
 </ul>
+ <div class="last_performance_container">
+	<p class="monospace perfo-title">Last Venues Location</p>
+	<div class="no-perfo">
+		{% for area in venues %}
+			<div class="perfo-perfo">
+				<p class="perfo-loc">{{ area.city }}, {{ area.state }}</p>
+					{% for venue in area.last_venues_location %}
+						<div class="col-sm-4">
+							<div class="tile tile-show perfo-tile">
+								<img src="{{ venue.Venue.image_link }}" alt="Show Venue Image" class="perfo-img"/>
+								<p class="perfo-time">{{ venue.start_time|datetime('full') }}</p>
+								<div class="perfo-table">
+								<h5 class="perfo-venue"><a href="/artists/{{ venue.artist }}">{{ venue.Artist.name }}</a></h5>			
+								<p class="perfo-play">playing at</p>
+								<h5 class="perfo-artist"><a href="/venues/{{ venue.venue }}">{{ venue.Venue.name }}</a></h5>
+								</div>
+							</div>
+						</div>
+					{% endfor %}	
+			</div>	
+		{% endfor %}
+		</div>
+</div> 
 {% endblock %}

@@ -188,7 +188,7 @@ h2.monospace {
   text-align: center;
   padding: 15px 25px;
   border: solid 1px #ebebeb;
-  height: 325px;
+  height: 370px;
   margin-bottom: 15px;
 }
 .tile img {
@@ -215,7 +215,7 @@ h2.monospace {
 }
 
 .search input[type="submit"]{
-  background-color: rgb(255, 230, 0);
+  background-color: #ffc63a;
   transition: 0.5s;
 }
 .search input[type="submit"]:hover,
@@ -227,3 +227,67 @@ h2.monospace {
 .copyright_container{
   text-align: center;
 }
+.last_performance_container{
+  background: #ffc63a;
+  margin: 20px 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+.perfo-title{
+  background: #ffffff;
+}
+.perfo-perfo{
+  width: 100% !important;
+}
+.perfo-loc{
+  padding: 20px 0px 0px 20px;
+  font-size: 15px;
+}
+.no-perfo{
+  display: flex;
+  flex-direction: column;
+}
+.perfo-time{
+  font-size: 12px;
+  margin: 15px 0 0 0;
+}
+.perfo-table{
+  background-color: white;
+}
+.perfo-play{
+  background: rgba(164, 164, 164, 0.089);
+  padding: 7px;
+}
+.perfo-artist a{
+  color: black;    
+  font-weight: bold;
+  background-color: #ffc63a94;
+  padding: 7px;
+  letter-spacing: 1px;
+}
+   
+.perfo-venue a{
+  font-size: 12px;
+  color: #626161;
+}
+.perfo-img{
+  max-height: 150px !important;
+  max-height: 130px !important;
+  min-width: 150px !important;
+}
+.perfo-tile{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-width: 5px;
+  background: aliceblue;
+}
+
+   
+   
+   

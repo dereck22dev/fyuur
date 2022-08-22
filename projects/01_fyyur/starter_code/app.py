@@ -81,16 +81,20 @@ def venues():
     data = []
 
     # Pour chaque Villes et Etats ajoutons à @data les données à renvoyer à la vue
-    for i in distinct_city_state:
-        data.append(
-            {
-                "city": i.city,
-                "state": i.state,
-                "venues": Venue.query.filter(
-                    Venue.city == i.city, Venue.state == i.state
-                ).all(),
-            }
-        )
+    for location in distinct_city_state:
+
+        city= location.city
+        state= location.state
+        venues= Venue.query.filter(Venue.city == location.city, Venue.state == location.state).all()
+        performances=db.session.query(Show).join(Venue).filter(Show.venue ==Venue.id,Venue.city == location.city, Venue.state == location.state).filter(Show.start_time<datetime.now()).all()
+
+        data.append({
+            "city":city,
+            "state":state,
+            "venues":venues,
+            "performances":performances
+        })
+        print(data)
     return render_template("pages/venues.html", areas=data)
 
 
@@ -410,12 +414,49 @@ def delete_venue(venue_id):
 #  ----------------------------------------------------------------
 @app.route("/artists")
 def artists():
-    artist_found = Artist.query.all()
-    data = []
-    for artist in artist_found:
-        data.append({"id": artist.id, "name": artist.name})
 
-    return render_template("pages/artists.html", artists=data)
+    #------sction liste des artistes
+
+    #on recupère tout les artist et on les filtres
+    artist_found = Artist.query.order_by(Artist.name).all()
+ 
+    #va contenir une liste des artists
+    artists = []
+    for artist in artist_found:
+        artists.append({
+            "id": artist.id, 
+            "name": artist.name,
+            })
+
+    #----section last venue location data 
+
+    # on recupères les différentes villes et Etats et on les filtres
+    distinct_city_state = (
+        Venue.query.distinct(Venue.city, Venue.state)
+        .order_by(Venue.city, Venue.state)
+        .all()
+    )
+
+    # data contiendra la liste des lieux de representation
+    venue_data = []
+
+    # Pour chaque Villes et Etats ajoutons à @data les données à renvoyer à la vue
+    for location in distinct_city_state:
+        city= location.city
+        state= location.state
+        venues= Venue.query.filter(Venue.city == location.city, Venue.state == location.state).all()
+        last_venues_location=db.session.query(Show).join(Venue).filter(Show.venue==Venue.id,Venue.city == location.city, Venue.state == location.state).filter(Show.start_time<datetime.now()).all()
+
+        venue_data.append({
+            "city":city,
+            "state":state,
+            "venues":venues,
+            "last_venues_location":last_venues_location
+        })
+
+    #contiens la liste des atists et la liste des lieux de representation
+
+    return render_template("pages/artists.html",artists=artists,venues=venue_data)
 
 
 @app.route("/artists/search", methods=["POST"])
@@ -761,9 +802,6 @@ def shows():
             "venue_image_link": show.Venue.image_link,
             "start_time": format_datetime(str(show.start_time)),
         })
-
-        print(upcoming_shows)   
-        print(len(upcoming_shows))
      
         shows_list={
             "upcoming_shows":upcoming_shows,
@@ -771,7 +809,7 @@ def shows():
             "upcoming_shows_count":len(upcoming_shows),
             "past_shows_count":len(past_shows)
         }
-        print(shows_list)
+
     return render_template("pages/shows.html", shows=shows_list)
 
 
